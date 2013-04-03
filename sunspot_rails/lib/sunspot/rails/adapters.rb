@@ -70,14 +70,14 @@ module Sunspot #:nodoc:
         # Array:: Collection of ActiveRecord models
         #
         def load_all(ids)
-          # breaks multiple specs, but is completely functional, rewriting those tests will be for another day
-          options = options_for_find.merge(:conditions => { @clazz.primary_key => ids.map { |id| id }})
+          # @clazz.all(options_for_find.merge(
+          #   :conditions => { @clazz.primary_key => ids.map { |id| id }}
+          # ))
 
-          @clazz = @clazz.where(options[:conditions]) if options[:conditions]
-          @clazz = @clazz.includes(options[:include]) if options[:include]
-          @clazz = @clazz.select(options[:select]) if options[:select]
-
-          @clazz.to_a
+          clazz = @clazz.where(@clazz.primary_key => ids.map { |id| id })
+          clazz.includes(options_for_find[:include]) if options_for_find[:include]
+          clazz.select(options_for_find[:select]) if options_for_find[:select]
+          clazz.load
         end
         
         private
